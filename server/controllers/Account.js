@@ -67,24 +67,29 @@ const changePassword = async (req, res) => {
   }
 
   try {
-    const account = await Account.findOne({ username });
+    const account = await Account.findOne({ username }).exec();
     if (!account) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const authenticated = await Account.authenticate(username, oldPassword);
-    if (!authenticated) {
+    const isValid = await Account.authenticate(username, oldPassword, (err, user) => {
+      if (err || !user) return false;
+      return true;
+    });
+
+    if (!isValid) {
       return res.status(401).json({ error: 'Old password is incorrect' });
     }
 
+    //hsh the new password
     const hash = await Account.generateHash(newPassword);
     account.password = hash;
     await account.save();
 
-    return res.json({ success: true, message: 'Password changed successfully' });
+    return res.json({ success: true, message: 'Password changed successfully!' });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: 'An error occurred' });
+    console.error(err);
+    return res.status(500).json({ error: 'An error occurred while changing password' });
   }
 };
 
