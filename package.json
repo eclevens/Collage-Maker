@@ -7,7 +7,9 @@
     "webpack": "webpack",
     "webpackWatch": "webpack watch",
     "nodemon": "nodemon -e js,html,css --watch ./server --watch ./hosted ./server/app.js",
-    "start": "node ./server/app.js",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "node ./server/app.js",
+    "client": "npm start --prefix client",
     "pretest": "eslint ./server --fix",
     "test": "echo \"Tests complete\"",
     "heroku-postbuild": "webpack"
@@ -21,6 +23,8 @@
   "author": "Cody Van De Mark / Austin Willoughby",
   "license": "Apache 2.0",
   "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
     "connect-redis": "^9.0.0",
@@ -30,11 +34,13 @@
     "express-session": "^1.18.2",
     "helmet": "^8.1.0",
     "mongoose": "^8.19.3",
+    "react-router-dom": "^7.9.6",
     "redis": "^5.9.0",
     "serve-favicon": "^2.5.1",
     "underscore": "^1.13.7"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.32.0",
